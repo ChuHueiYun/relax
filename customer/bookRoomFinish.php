@@ -79,21 +79,39 @@
 <!-- ======================================================================================================================================================= -->
 			<?php 
 				include "db_conn.php";
+				$customerName = $_POST['customerName'];
+				$cellphone = $_POST['cellphone'];
+				$accountNumber = $_POST['accountNumber'];
 				
 				$sql = "select max(customerID) from customer"; 
 				$rs = mysqli_query($db,$sql); 
 				$row = mysqli_fetch_array($rs); 
-				$row["0"]++;
-				$customerID = $row['0'];
-				$customerName = $_POST['customerName'];
-				$cellphone = $_POST['cellphone'];
-				$accountNumber = $_POST['accountNumber'];
+				$maxrow = $row["0"];
+				$maxrow = $maxrow+1;
+				$sql = "select * from customer"; 
+				$result = mysqli_query($db, $sql);
+				if($result->num_rows > 0) {
+					while($row = $result->fetch_assoc()) {
+						if ($row["customerName"]==$customerName && $row["cellphone"]==$cellphone && $row["accountNumber"]== $accountNumber){
+							$customerID = $row["customerID"];
+							break;
+						}	
+						$customerID = $maxrow;
+					}						
+				}
+					
 				$checkInDate = $_POST['checkInDate'];
 				$checkOutDate = $_POST['checkOutDate'];
 				$bigAmount = $_POST['bigAmount'];
 				$smallAmount = $_POST['smallAmount'];
 				$customerNumber = $_POST['customerNumber'];
-				$orderID = $customerID;
+				
+				
+				$sql = "select max(orderID) from roomorder"; 
+				$rs = mysqli_query($db,$sql); 
+				$row = mysqli_fetch_array($rs); 
+				$row["0"]++;								
+				$orderID = $row["0"];
 				$payDeposit = '否';
 				$payBalance = '否';
 				$day = (strtotime($checkOutDate) - strtotime($checkInDate)) / 86400;	//計算天數
@@ -322,37 +340,24 @@
 							$totalPrice = $totalPrice+($bigAmount*2000 + $smallAmount*1800);
 						}
 					}
-				$query = "SELECT * FROM customer where customerName = '$customerName' and cellphone = '$cellphone' and accountNumber = '$accountNumber'";
-						if($stmt =  $db->query($query)){
-							while($result = mysqli_fetch_row($stmt)){
-								$id[$i] = $result[0];
-								$i++;
-								$customerID = $result[0];
-								$customerName = $result[1];
-								$cellphone = $result[2];
-								$accountNumber = $result[3];
-								
-							}
-							$query = ("insert into roomorder value(?,?,?,?,?,?,?,?,?,?)");
-								$stmt = $db->prepare($query);
-								$stmt->bind_param("iiissiissi",$orderID,$bigAmount,$smallAmount,$checkInDate,$checkOutDate,$customerID,$customerNumber,$payDeposit,$payBalance,$totalPrice);
-								$stmt->execute();
-						}
+					
+					
 				$query = "SELECT * FROM customer where customerName = '$customerName' and cellphone = '$cellphone'  and  accountNumber = '$accountNumber'";
 						if($stmt =  $db->query($query)){
 							if(mysqli_fetch_row($stmt)<1){
 								$query = ("insert into customer value(?,?,?,?)");
 								$stmt = $db->prepare($query);
-								$stmt->bind_param("isss",$customerID,$customerName,$cellphone,$accountNumber);
-								$stmt->execute();
-								$query = ("insert into roomorder value(?,?,?,?,?,?,?,?,?,?)");
-								$stmt = $db->prepare($query);
-								$stmt->bind_param("iiissiissi",$orderID,$bigAmount,$smallAmount,$checkInDate,$checkOutDate,$customerID,$customerNumber,$payDeposit,$payBalance,$totalPrice);
+								$stmt->bind_param("isss",$maxrow,$customerName,$cellphone,$accountNumber);
 								$stmt->execute();
 			
-							}	
+							}
+								
 						}
-							
+						
+					$query = ("insert into roomorder value(?,?,?,?,?,?,?,?,?,?)");
+					$stmt = $db->prepare($query);
+					$stmt->bind_param("iiissiissi",$orderID,$bigAmount,$smallAmount,$checkInDate,$checkOutDate,$customerID,$customerNumber,$payDeposit,$payBalance,$totalPrice);
+					$stmt->execute();
 				
 				
 				
