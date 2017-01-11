@@ -70,7 +70,7 @@
 							<li class="active"><a href="bookRoom.html">我要訂房</a></li>
 							<li><a href="checkBookInfo.html">查看訂單</a></li>
 							<li><a href="surround.html">附近導覽</a></li>
-							<li><a href="customerComment.html">使用者評論</a></li>
+							<li><a href="customerComment.php">使用者評論</a></li>
 						</ul>
 					</div>
 				</div>
