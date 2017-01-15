@@ -4,8 +4,8 @@
 	<body>
 		<?php
 			$localhost = 'localhost';
-			$user = 'root';
-			$password = '00357053';
+			$user = 'root';		//資料庫連線帳號
+			$password = '';		//資料庫連線密碼
 			$database = 'relax';
 			 //進行連線
 			$db = mysqli_connect($localhost, $user, $password, $database);
