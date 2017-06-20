@@ -1,6 +1,6 @@
 <?php
 	include "connect_db.php";
-
+	
 	$customerName = $_POST["customerName"];
 	$cellphone = $_POST["cellphone"];
 	$accountNumber = $_POST["accountNumber"];
